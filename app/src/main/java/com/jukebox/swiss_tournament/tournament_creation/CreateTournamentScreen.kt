@@ -3,48 +3,52 @@
 package com.jukebox.swiss_tournament.tournament_creation
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import com.jukebox.swiss_tournament.MainActivity
 import com.jukebox.swiss_tournament.data.model.Player
+import com.jukebox.swiss_tournament.data.model.Tournament
 
 
 @Composable
 fun CreateTournamentScreen (
     viewModel: CreateTournamentViewModel,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    playTournament: (tournamentInfo: Tournament, players: List<Player>) -> Unit,
 ) {
     val scrollState = rememberScrollState()
     Column (
@@ -68,8 +72,19 @@ fun CreateTournamentScreen (
             modifier = Modifier.fillMaxWidth()
         )
         MoreTournamentSettings(viewModel)
-        Divider()
+        Divider(modifier = Modifier.padding(8.dp))
         PlayerList(viewModel)
+        Spacer(modifier = Modifier.weight(1f))
+        Button(onClick = {playTournament(
+            viewModel.generateTournamentInfo(),
+            viewModel.players
+        )}) {
+            Icon(
+                imageVector = Icons.Default.PlayArrow,
+                contentDescription = "OK",
+                modifier = Modifier.padding(8.dp)
+            )
+        }
     }
 }
 
@@ -113,6 +128,7 @@ fun PlayerList(viewModel: CreateTournamentViewModel) {
             Row (
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
+                    .padding(bottom = 8.dp)
 
             ) {
                 TextField(
@@ -129,12 +145,16 @@ fun PlayerList(viewModel: CreateTournamentViewModel) {
                     modifier = Modifier.weight(1f)
                 )
             }
-            Button(onClick = { viewModel.addPlayer()}) {
-                Text(text = "Fertig")
+            Button(
+                onClick = { viewModel.addPlayer()}
+            ) {
+                Icon(imageVector = Icons.Default.CheckCircle, contentDescription = "Hinzufügen")
             }
         } else {
-            Button(onClick = { viewModel.isAddingPlayer = true }) {
-                Text(text = "Spieler hinzufügen")
+            Button(
+                onClick = { viewModel.isAddingPlayer = true }
+            ) {
+                Icon(imageVector = Icons.Default.AddCircle, contentDescription = "Spieler hinzufügen")
             }
         }
     }
@@ -188,11 +208,11 @@ fun MoreTournamentSettings(
             )
         }
     }
-    Button(
+    IconButton(
         onClick = {
             isOpen = !isOpen
         },
-        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp)
+        modifier = Modifier.fillMaxWidth()
     ) {
         Text(
             text = if (isOpen) {"Weniger Einstellungen..."} else {"Mehr Einstellungen ..."},

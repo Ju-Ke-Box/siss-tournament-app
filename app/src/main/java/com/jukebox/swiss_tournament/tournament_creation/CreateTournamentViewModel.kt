@@ -7,7 +7,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import com.jukebox.swiss_tournament.data.model.Player
+import com.jukebox.swiss_tournament.data.model.Tournament
 
 class CreateTournamentViewModel: ViewModel() {
     var name by mutableStateOf("")
@@ -60,5 +62,18 @@ class CreateTournamentViewModel: ViewModel() {
             }
         }
         return max + 1
+    }
+
+    fun generateTournamentInfo(): Tournament {
+        return Tournament(
+            name, numOfRounds, startDate, endDate, city, federation, arbiters.split(","))
+    }
+
+    companion object {
+        val Factory = object: ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return CreateTournamentViewModel() as T
+            }
+        }
     }
 }
