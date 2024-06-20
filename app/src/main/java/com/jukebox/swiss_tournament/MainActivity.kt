@@ -1,6 +1,7 @@
 package com.jukebox.swiss_tournament
 
 import android.os.Bundle
+import android.os.Environment.getExternalStorageDirectory
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -26,6 +27,7 @@ import com.jukebox.swiss_tournament.tournament_creation.CreateTournamentViewMode
 import com.jukebox.swiss_tournament.tournament_playthrough.PlayTournamentScreen
 import com.jukebox.swiss_tournament.tournament_playthrough.PlayTournamentViewModel
 import com.jukebox.swiss_tournament.ui.theme.SwissTournamentTheme
+import java.io.File
 
 @OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
@@ -86,8 +88,9 @@ class MainActivity : ComponentActivity() {
                                     PlayTournamentScreen(
                                         tournamentInfo = playTournamentViewModel.tournamentInfo,
                                         players = playTournamentViewModel.players,
+                                        filesDir =  File("${getExternalStorageDirectory().path}/Documents"),
                                         viewModel = playTournamentViewModel,
-                                        navController = navController
+                                        navController = navController,
                                     )
                                 },
                             )

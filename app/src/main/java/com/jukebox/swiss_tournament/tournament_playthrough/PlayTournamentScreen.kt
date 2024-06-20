@@ -7,7 +7,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavController
 import com.jukebox.swiss_tournament.data.model.Player
+import com.jukebox.swiss_tournament.data.model.TRFxFileHandler
 import com.jukebox.swiss_tournament.data.model.Tournament
+import org.apache.commons.lang3.StringUtils
+import java.io.File
 
 @Composable
 fun PlayTournamentScreen(
@@ -15,10 +18,12 @@ fun PlayTournamentScreen(
     players: List<Player>,
     viewModel: PlayTournamentViewModel,
     navController: NavController,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    filesDir: File
 ) {
+    val trFxFileHandler = TRFxFileHandler()
     LaunchedEffect(key1 = true) {
-        //create TRFx File from tournamentInfo an players
+        trFxFileHandler.createInitialTRFxFile(tournamentInfo, players, filesDir)
         //calculate initial pairings
         //show initial pairings
         // wait for results
@@ -36,3 +41,7 @@ fun PlayTournamentScreen(
     }
 
 }
+
+
+
+
