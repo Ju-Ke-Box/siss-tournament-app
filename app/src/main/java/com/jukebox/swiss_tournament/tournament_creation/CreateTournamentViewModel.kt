@@ -3,7 +3,6 @@ package com.jukebox.swiss_tournament.tournament_creation
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.lifecycle.ViewModel
@@ -67,6 +66,21 @@ class CreateTournamentViewModel: ViewModel() {
     fun generateTournamentInfo(): Tournament {
         return Tournament(
             name, numOfRounds, startDate, endDate, city, federation, arbiters.split(","))
+    }
+
+    fun reset() {
+        name = ""
+        numOfRounds = 0
+        startDate = ""
+        endDate = ""
+        city = ""
+        federation = ""
+        arbiters = ""
+        players.removeRange(0, players.size)
+        isEditingPlayer = false
+        isAddingPlayer = false
+        addedPlayerFirstName = ""
+        addedPlayerLastName = ""
     }
 
     companion object {

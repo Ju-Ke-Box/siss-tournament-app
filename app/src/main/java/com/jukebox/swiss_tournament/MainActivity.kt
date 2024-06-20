@@ -61,6 +61,7 @@ class MainActivity : ComponentActivity() {
                                 content = { 
                                     StartScreen(
                                         createTournament = {
+                                            createTournamentViewModel.reset()
                                             navController.navigate(Screens.CreateTournamentScreen)
                                         }
                                     )
@@ -83,7 +84,7 @@ class MainActivity : ComponentActivity() {
                                 route = Screens.PlayTournamentScreen,
                                 content = {
                                     PlayTournamentScreen(
-                                        tournamentInfo = playTournamentViewModel.tournamentInfo!!,
+                                        tournamentInfo = playTournamentViewModel.tournamentInfo,
                                         players = playTournamentViewModel.players,
                                         viewModel = playTournamentViewModel,
                                         navController = navController
