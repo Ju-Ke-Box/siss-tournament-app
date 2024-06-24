@@ -14,6 +14,14 @@ class TRFxFileHandler {
         val dir = File(dirname)
         dir.mkdirs()
         val file = File(filename)
+        val content = createInitialFileContent(tournamentInfo, players);
+        file.writeText(content)
+    }
+
+    private fun createInitialFileContent(
+        tournamentInfo: Tournament,
+        players: List<Player>,
+    ): String {
         val tournamentPart = """
             012 ${tournamentInfo.name}
             022 ${tournamentInfo.city}
@@ -30,16 +38,16 @@ class TRFxFileHandler {
             val dataIdForPlayerData = "001"
             val startingRank = "$index".padStart(4)
             val sex = "-"
-            val title = player.title
-            val name = StringUtils.abbreviate("${player.lastName}, ${player.firstName}", 32) //TODO exact 32 (padding front)
+            val title = player.title.padStart(3)
+            val name = StringUtils.abbreviate("${player.lastName}, ${player.firstName}", 32).padStart(32)
             val fideRating = "RRRR"
-            val fideFederation = StringUtils.left(tournamentInfo.federation, 3) //TODO exact 3 (padding front)
+            val fideFederation = StringUtils.left(tournamentInfo.federation, 3).padStart(3)
             val fideNumber = "NNNNNNNNNNN"
             val birthdate = "YYYY/MM/DD"
             val points = " 0.0"
             val rank = "0001"
             buffer.append("$dataIdForPlayerData $startingRank $sex $title $name $fideRating $fideFederation $fideNumber $birthdate $points $rank  \n")
         }
-        file.writeText(buffer.toString())
+        return buffer.toString()
     }
 }

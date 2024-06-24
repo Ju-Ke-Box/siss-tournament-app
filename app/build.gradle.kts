@@ -49,6 +49,8 @@ android {
     }
 }
 
+configurations { create("externalLibs") }
+
 dependencies {
 
     implementation(libs.androidx.core.ktx)
@@ -69,4 +71,6 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation(libs.apache.lang3.stringutils)
+
+    api(fileTree("src/main/libs") { include("*.jar") })
 }
