@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -15,10 +16,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -48,11 +49,7 @@ class MainActivity : ComponentActivity() {
                         factoryProducer = { PlayTournamentViewModel.Factory}
                     )
 
-                    Scaffold(
-                        topBar = { TopAppBar(
-                            title = { Text(text = "Swiss Tournament App") },
-                        )},
-                    ) {
+                    Scaffold {
                         NavHost(
                             navController = navController,
                             startDestination = Screens.StartScreen,
@@ -86,8 +83,6 @@ class MainActivity : ComponentActivity() {
                                 route = Screens.PlayTournamentScreen,
                                 content = {
                                     PlayTournamentScreen(
-                                        tournamentInfo = playTournamentViewModel.tournamentInfo,
-                                        players = playTournamentViewModel.players,
                                         filesDir =  File("${getExternalStorageDirectory().path}/Documents"),
                                         viewModel = playTournamentViewModel,
                                         navController = navController,
@@ -111,11 +106,20 @@ class MainActivity : ComponentActivity() {
             verticalArrangement = Arrangement.Center,
             modifier = modifier.fillMaxSize()
         ) {
+            Text(
+                text = "Swiss Tournament App",
+                style = MaterialTheme.typography.headlineLarge,
+                modifier = Modifier.padding(top = 32.dp)
+            )
+            Spacer(
+                modifier = Modifier.weight(1f)
+            )
             Button(
                 onClick = { createTournament() },
             ) {
                 Text(text = "Neues Tunier erstellen")
             }
+            Spacer(modifier = Modifier.weight(1f))
         }
     }
 
@@ -124,5 +128,4 @@ class MainActivity : ComponentActivity() {
         const val CreateTournamentScreen = "createTournamentScreen"
         const val PlayTournamentScreen = "playTournamentScreen"
     }
-
 }

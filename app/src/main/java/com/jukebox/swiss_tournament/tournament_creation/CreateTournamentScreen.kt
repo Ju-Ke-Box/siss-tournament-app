@@ -38,8 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavHostController
-import com.jukebox.swiss_tournament.MainActivity
 import com.jukebox.swiss_tournament.data.model.Player
 import com.jukebox.swiss_tournament.data.model.Tournament
 
@@ -65,9 +63,15 @@ fun CreateTournamentScreen (
             modifier = Modifier.fillMaxWidth()
         )
         TextField(
-            value = ""+viewModel.numOfRounds,
+            value = "${viewModel.numOfRounds}",
             label = { Text("Anzahl der Runden") },
-            onValueChange = {viewModel.numOfRounds = it.toInt()},
+            onValueChange = {
+                if (it.isBlank()) {
+                    viewModel.numOfRounds = 0
+                } else {
+                    viewModel.numOfRounds = it.toInt()
+                }
+            },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             modifier = Modifier.fillMaxWidth()
         )

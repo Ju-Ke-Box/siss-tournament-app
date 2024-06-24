@@ -14,7 +14,7 @@ class TRFxFileHandler {
         val dir = File(dirname)
         dir.mkdirs()
         val file = File(filename)
-        val content = createInitialFileContent(tournamentInfo, players);
+        val content = createInitialFileContent(tournamentInfo, players)
         file.writeText(content)
     }
 
