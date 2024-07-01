@@ -1,58 +1,51 @@
-package com.jukebox.swiss_tournament.data.pairing_engine;
+package com.jukebox.swiss_tournament.data.pairing_engine
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.nio.file.Files;
-import java.util.HashMap;
-import java.util.Map;
+import com.jukebox.swiss_tournament.data.model.PossibleResults
+import javafo.api.JaVaFoApi
+import java.io.File
+import java.io.IOException
+import java.nio.file.Files
 
-import javafo.api.JaVaFoApi;
-
-public class JaVaFoHandler {
-
-    private final File dir;
-
-    public JaVaFoHandler(File dir) {
-        this.dir = dir;
+class JaVaFoHandler {
+    fun getPairings(filename: String): Map<Pair<Int, Int>, String> {
+        val input = File(filename)
+        if (!input.exists()) {
+            throw IllegalArgumentException("file $filename does not exist or is inaccessible");
+        }
+        var pairings = HashMap<Pair<Int, Int>, String>()
+        try {
+            val inputStream = Files.newInputStream(input.toPath())
+            val outputRows = JaVaFoApi.exec(PAIRING, inputStream).split("\n")
+            val numberOfPairings = outputRows[0].toInt()
+            val pairingRows = outputRows.subList(1, numberOfPairings+1)
+            for (row in pairingRows) {
+                val (white:Int , black:Int ) = row.split(" ").map {it.toInt()}
+                //startingId 0 means "bye (auto win)"
+                pairings[Pair(white, black)] =
+                if (white == 0) {
+                    PossibleResults.blackWon
+                } else if (black == 0) {
+                    PossibleResults.whiteWon
+                } else {
+                    PossibleResults.ongoing
+                }
+            }
+        } catch (e: IOException) {
+            println(e.message)
+            pairings = HashMap()
+        }
+        return pairings
     }
 
-    //Command Parameter for exec
-    public static int PAIRING = 1000;
-    public static int PAIRING_WITH_BAKU = 1001;
-    public static int PRE_PAIRING_CHECKLIST = 1100;
-    public static int POST_PAIRING_CHECKLIST = 1110;
-    public static int POST_PAIRING_WITH_BAKU_CHECKLIST = 1111;
-    public static int CHECK_TOURNAMENT = 1200;
-    public static int CHECK_ONE_ROUND = 1210;
-    public static int RANDOM_GENERATOR = 1300;
-    public static int RANDOM_GENERATOR_WITH_BAKU = 1301;
-
-
-    public Map<Integer, Integer> getPairings(String filename) {
-        File input = new File(dir.getAbsolutePath()+"/"+filename);
-        if (!input.exists()) {
-            throw new IllegalArgumentException("file "+filename+" does not exist in "+dir.getAbsolutePath());
-        }
-
-        Map<Integer, Integer> pairings = new HashMap<>();
-        try (
-                InputStream inputStream = Files.newInputStream(input.toPath());
-        ){
-            String[] output = JaVaFoApi.exec(PAIRING, inputStream).split("\n");
-            for (int i = 0; i < output.length; i++) {
-                if (i==0) {continue;} //first row is the number of pairings
-                String[] pair = output[i].split(" ");
-                pairings.put(
-                    Integer.parseInt(pair[0]),
-                    Integer.parseInt(pair[1])
-                );
-            }
-        } catch (IOException e) {
-            pairings = new HashMap<>();
-        }
-
-        return pairings;
+    companion object {
+        val PAIRING = 1000
+        val PAIRING_WITH_BAKU = 1001
+        val PRE_PAIRING_CHECKLIST = 1100
+        val POST_PAIRING_CHECKLIST = 1110
+        val POST_PAIRING_WITH_BAKU_CHECKLIST = 1111
+        val CHECK_TOURNAMENT = 1200
+        val CHECK_ONE_ROUND = 1210
+        val RANDOM_GENERATOR = 1300
+        val RANDOM_GENERATOR_WITH_BAKU = 1301
     }
 }

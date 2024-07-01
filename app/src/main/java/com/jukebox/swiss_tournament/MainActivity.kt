@@ -1,6 +1,7 @@
 package com.jukebox.swiss_tournament
 
 import android.os.Bundle
+import android.os.Environment
 import android.os.Environment.getExternalStorageDirectory
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -30,7 +31,6 @@ import com.jukebox.swiss_tournament.tournament_playthrough.PlayTournamentViewMod
 import com.jukebox.swiss_tournament.ui.theme.SwissTournamentTheme
 import java.io.File
 
-@OptIn(ExperimentalMaterial3Api::class)
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +46,9 @@ class MainActivity : ComponentActivity() {
                         factoryProducer = { CreateTournamentViewModel.Factory}
                     )
                     val playTournamentViewModel: PlayTournamentViewModel by viewModels(
-                        factoryProducer = { PlayTournamentViewModel.Factory}
+                        factoryProducer = { PlayTournamentViewModel.Factory(
+                            filesDir = File("${getExternalStorageDirectory().path}/Documents")
+                        )}
                     )
 
                     Scaffold {
@@ -83,7 +85,6 @@ class MainActivity : ComponentActivity() {
                                 route = Screens.PlayTournamentScreen,
                                 content = {
                                     PlayTournamentScreen(
-                                        filesDir =  File("${getExternalStorageDirectory().path}/Documents"),
                                         viewModel = playTournamentViewModel,
                                         navController = navController,
                                     )

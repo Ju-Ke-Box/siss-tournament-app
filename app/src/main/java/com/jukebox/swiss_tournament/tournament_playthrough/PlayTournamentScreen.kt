@@ -20,7 +20,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.jukebox.swiss_tournament.data.model.PossibleResults
-import com.jukebox.swiss_tournament.data.model.TRFxFileHandler
 import java.io.File
 
 @Composable
@@ -28,22 +27,10 @@ fun PlayTournamentScreen(
     viewModel: PlayTournamentViewModel,
     navController: NavController,
     modifier: Modifier = Modifier,
-    filesDir: File
 ) {
-    val trFxFileHandler = TRFxFileHandler()
+
     LaunchedEffect(key1 = true) {
-        trFxFileHandler.createInitialTRFxFile(viewModel.tournamentInfo, viewModel.players, filesDir)
-        //calculate initial pairings
-        //FIXME Mock
-        for (i in 0..viewModel.players.lastIndex step 2) {
-            viewModel.currentPairings[Pair(i, i+1)] = PossibleResults.ongoing
-        }
-
-        //show initial pairings
-        // wait for results
-        //calculate standings (points + rank) -> update in TRFx File + store in ViewModel for faster access?
-        //for each remaining round -> repeat
-
+        viewModel.initialize()
     }
 
     Column (
@@ -63,12 +50,7 @@ fun PlayTournamentScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             items(viewModel.currentPairings.keys.toList()) {
-                val whiteId = it.first
-                val blackId = it.second
-                //TODO Handle 0 and remember to -1 the pairingId -> also change in TRFxFileHandler
-
-                val whitePlayer = viewModel.players[whiteId]
-                val blackPlayer = viewModel.players[blackId]
+                val (whitePlayer, blackPlayer) = viewModel.getPlayersByIds(it)
 
                 Row (
                     horizontalArrangement = Arrangement.Center,
@@ -95,13 +77,13 @@ fun PlayTournamentScreen(
                         onResultChange = {newResult ->
                             when(newResult) {
                                 PossibleResults.whiteWon -> {
-                                    viewModel.currentPairings[Pair(whiteId, blackId)] = "1"
+                                    viewModel.currentPairings[it] = "1"
                                 }
                                 PossibleResults.blackWon -> {
-                                    viewModel.currentPairings[Pair(whiteId, blackId)] = "0"
+                                    viewModel.currentPairings[it] = "0"
                                 }
                                 PossibleResults.remis -> {
-                                    viewModel.currentPairings[Pair(whiteId, blackId)] = "-"
+                                    viewModel.currentPairings[it] = "-"
                                 }
                             }
                         },
