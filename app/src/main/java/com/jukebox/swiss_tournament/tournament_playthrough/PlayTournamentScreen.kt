@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,11 +44,11 @@ fun PlayTournamentScreen(
         LazyColumn(
             modifier = Modifier.fillMaxWidth()
         ) {
-            items(viewModel.currentPairings.keys.toList()) {
-                val whitePlayer = viewModel.getPlayerById(it.first)
-                val blackPlayer = viewModel.getPlayerById(it.second)
+            items(viewModel.currentPairings.keys.toList()) { pair ->
+                val whitePlayer = viewModel.getPlayerById(pair.first)
+                val blackPlayer = viewModel.getPlayerById(pair.second)
                 val initialResultPickerOption =
-                    when (viewModel.currentPairings[it]) {
+                    when (viewModel.currentPairings[pair]) {
                         PossibleStoreResult.blackWon -> PossibleDisplayResults.blackWon
                         PossibleStoreResult.whiteWon -> PossibleDisplayResults.whiteWon
                         else -> PossibleDisplayResults.ongoing
@@ -59,7 +60,8 @@ fun PlayTournamentScreen(
                 ){
                     Text(
                         text = "${whitePlayer.lastName}, ${whitePlayer.firstName}",
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
                             .border(1.dp, MaterialTheme.colorScheme.tertiary)
                             .padding(4.dp)
                     )
@@ -69,7 +71,8 @@ fun PlayTournamentScreen(
                     )
                     Text(
                         text = "${blackPlayer.lastName}, ${blackPlayer.firstName}",
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier
+                            .weight(1f)
                             .border(1.dp, MaterialTheme.colorScheme.tertiary)
                             .padding(4.dp)
                     )
@@ -78,24 +81,29 @@ fun PlayTournamentScreen(
                         onResultChange = {newResult ->
                             when(newResult) {
                                 PossibleDisplayResults.whiteWon -> {
-                                    viewModel.currentPairings[it] = PossibleStoreResult.whiteWon
+                                    viewModel.currentPairings[pair] = PossibleStoreResult.whiteWon
                                 }
                                 PossibleDisplayResults.blackWon -> {
-                                    viewModel.currentPairings[it] = PossibleStoreResult.blackWon
+                                    viewModel.currentPairings[pair] = PossibleStoreResult.blackWon
                                 }
                                 PossibleDisplayResults.remis -> {
-                                    viewModel.currentPairings[it] = PossibleStoreResult.remis
+                                    viewModel.currentPairings[pair] = PossibleStoreResult.remis
                                 }
                             }
                         },
                         inititalOption = initialResultPickerOption,
-                        modifier = Modifier.width(120.dp)
+                        modifier = Modifier
+                            .width(120.dp)
                             .padding(start = 4.dp, end = 4.dp)
                     )
                 }
             }
         }
-
+        if (viewModel.currentPairings.values.none { it == PossibleStoreResult.ongoing }) {
+            Button(onClick = { viewModel.startNextRound() }) {
+                Text(text = "Nächste Runde")
+            }
+        }
     }
 
 }
