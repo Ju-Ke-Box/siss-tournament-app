@@ -52,7 +52,7 @@ class CreateTournamentViewModel: ViewModel() {
 
     private fun findNextPlayerId(players: List<Player>): Int {
         if (players.isEmpty()) {
-            return 0
+            return 1 // from 1 - 9999 -> FIDE spec
         }
         var max = players[0].id
         for (player in players) {
