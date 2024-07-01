@@ -50,7 +50,8 @@ fun PlayTournamentScreen(
             modifier = Modifier.fillMaxWidth()
         ) {
             items(viewModel.currentPairings.keys.toList()) {
-                val (whitePlayer, blackPlayer) = viewModel.getPlayersByIds(it)
+                val whitePlayer = viewModel.getPlayerById(it.first)
+                val blackPlayer = viewModel.getPlayerById(it.second)
 
                 Row (
                     horizontalArrangement = Arrangement.Center,

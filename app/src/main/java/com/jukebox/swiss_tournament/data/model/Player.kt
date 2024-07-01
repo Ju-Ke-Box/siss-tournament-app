@@ -5,4 +5,9 @@ data class Player(
     val firstName: String,
     val lastName: String,
     val title: String = ""
-)
+) {
+    companion object {
+        val byePlayer = Player(0, "bye", "(spielfrei)")
+    }
+}
+
