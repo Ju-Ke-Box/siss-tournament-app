@@ -1,9 +1,7 @@
 package com.jukebox.swiss_tournament.data.pairing_engine
 
-import com.jukebox.swiss_tournament.data.model.PossibleResults
-import javafo.api.JaVaFoApi
+import com.jukebox.swiss_tournament.data.model.PossibleDisplayResults
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
 import java.io.File
 
@@ -28,7 +26,7 @@ class JaVaFoHandlerTest {
         val result = javafoHandler.getPairings(file.absolutePath)
 
         val expected = HashMap<Pair<Int, Int>, String>()
-        expected[Pair(2,1)] = PossibleResults.ongoing
+        expected[Pair(2,1)] = PossibleDisplayResults.ongoing
         Assert.assertEquals(
             expected,
             result

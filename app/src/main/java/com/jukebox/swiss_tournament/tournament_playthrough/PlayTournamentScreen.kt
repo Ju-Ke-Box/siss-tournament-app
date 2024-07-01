@@ -13,14 +13,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.jukebox.swiss_tournament.data.model.PossibleResults
-import java.io.File
+import com.jukebox.swiss_tournament.data.model.PossibleDisplayResults
+import com.jukebox.swiss_tournament.data.model.PossibleStoreResult
 
 @Composable
 fun PlayTournamentScreen(
@@ -28,11 +27,6 @@ fun PlayTournamentScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-
-    LaunchedEffect(key1 = true) {
-        viewModel.initialize()
-    }
-
     Column (
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
@@ -52,6 +46,12 @@ fun PlayTournamentScreen(
             items(viewModel.currentPairings.keys.toList()) {
                 val whitePlayer = viewModel.getPlayerById(it.first)
                 val blackPlayer = viewModel.getPlayerById(it.second)
+                val initialResultPickerOption =
+                    when (viewModel.currentPairings[it]) {
+                        PossibleStoreResult.blackWon -> PossibleDisplayResults.blackWon
+                        PossibleStoreResult.whiteWon -> PossibleDisplayResults.whiteWon
+                        else -> PossibleDisplayResults.ongoing
+                    }
 
                 Row (
                     horizontalArrangement = Arrangement.Center,
@@ -74,20 +74,21 @@ fun PlayTournamentScreen(
                             .padding(4.dp)
                     )
                     ResultPicker(
-                        options = listOf(PossibleResults.whiteWon, PossibleResults.blackWon, PossibleResults.remis),
+                        options = listOf(PossibleDisplayResults.whiteWon, PossibleDisplayResults.blackWon, PossibleDisplayResults.remis),
                         onResultChange = {newResult ->
                             when(newResult) {
-                                PossibleResults.whiteWon -> {
-                                    viewModel.currentPairings[it] = "1"
+                                PossibleDisplayResults.whiteWon -> {
+                                    viewModel.currentPairings[it] = PossibleStoreResult.whiteWon
                                 }
-                                PossibleResults.blackWon -> {
-                                    viewModel.currentPairings[it] = "0"
+                                PossibleDisplayResults.blackWon -> {
+                                    viewModel.currentPairings[it] = PossibleStoreResult.blackWon
                                 }
-                                PossibleResults.remis -> {
-                                    viewModel.currentPairings[it] = "-"
+                                PossibleDisplayResults.remis -> {
+                                    viewModel.currentPairings[it] = PossibleStoreResult.remis
                                 }
                             }
                         },
+                        inititalOption = initialResultPickerOption,
                         modifier = Modifier.width(120.dp)
                             .padding(start = 4.dp, end = 4.dp)
                     )

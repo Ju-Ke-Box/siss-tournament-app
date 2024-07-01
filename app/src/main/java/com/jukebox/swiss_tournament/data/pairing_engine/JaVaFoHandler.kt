@@ -1,6 +1,6 @@
 package com.jukebox.swiss_tournament.data.pairing_engine
 
-import com.jukebox.swiss_tournament.data.model.PossibleResults
+import com.jukebox.swiss_tournament.data.model.PossibleStoreResult
 import javafo.api.JaVaFoApi
 import java.io.File
 import java.io.IOException
@@ -23,11 +23,11 @@ class JaVaFoHandler {
                 //startingId 0 means "bye (auto win)"
                 pairings[Pair(white, black)] =
                 if (white == 0) {
-                    PossibleResults.blackWon
+                    PossibleStoreResult.blackWon
                 } else if (black == 0) {
-                    PossibleResults.whiteWon
+                    PossibleStoreResult.whiteWon
                 } else {
-                    PossibleResults.ongoing
+                    PossibleStoreResult.ongoing
                 }
             }
         } catch (e: IOException) {

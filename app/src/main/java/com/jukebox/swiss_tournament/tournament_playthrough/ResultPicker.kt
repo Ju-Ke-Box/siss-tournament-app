@@ -18,10 +18,11 @@ import androidx.compose.ui.Modifier
 fun ResultPicker(
     options: List<String>,
     onResultChange: (newResult: String) -> Unit,
+    inititalOption: String = "-",
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
-    var selectedOption by remember { mutableStateOf("-") }
+    var selectedOption by remember { mutableStateOf(inititalOption) }
 
     ExposedDropdownMenuBox(
         expanded = expanded,

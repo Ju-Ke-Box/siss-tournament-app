@@ -32,8 +32,10 @@ class PlayTournamentViewModel(
         }
     }
 
-    fun initialize() {
-        val filename = trFxFileHandler.createInitialTRFxFile(tournamentInfo, players)
+    fun initialize(tournamentInfo: Tournament, players: List<Player>) {
+        this.tournamentInfo = tournamentInfo
+        this.players = players
+        val filename = trFxFileHandler.createInitialTRFxFile(this.tournamentInfo, this.players)
         val pairings = javafoHandler.getPairings(filename)
         pairings.forEach { (k, v) -> currentPairings[k]=v }
 
