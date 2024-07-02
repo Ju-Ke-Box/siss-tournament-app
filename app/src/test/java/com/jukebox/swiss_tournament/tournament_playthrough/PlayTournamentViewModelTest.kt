@@ -53,50 +53,54 @@ class PlayTournamentViewModelTest {
 
     @Test
     fun calculatePoints_test() {
+        viewModel.players = listOf(
+            Player(1, "A", "a"),
+            Player(2, "B", "b"),
+            Player(3, "C", "c"),
+            Player(4, "D", "d"),
+            Player(5, "E", "e"),
+            Player(6, "F", "f"),
+        )
         viewModel.currentPairings.put(Pair(1, 2), PossibleStoreResult.whiteWon)
         viewModel.currentPairings.put(Pair(3, 4), PossibleStoreResult.blackWon)
         viewModel.currentPairings.put(Pair(5, 6), PossibleStoreResult.remis)
 
-        viewModel.points = mutableListOf(0.0f,0.0f,0.0f,0.0f,0.0f,0.0f)
         viewModel.calculatePoints()
 
         val expected = mutableListOf(1.0f, 0.0f, 0.0f, 1.0f, 0.5f, 0.5f)
-        assertEquals(expected, viewModel.points)
+        val result = viewModel.players.map { p -> p.points }
+        assertEquals(expected, result)
     }
 
     @Test
     fun calculateRanks_all_different() {
         viewModel.players = listOf(
-            Player(1, "A", "a"),
-            Player(2, "B", "b"),
-            Player(3, "C", "c"),
-            Player(4, "D", "d"),
+            Player(1, "A", "a", points = 1.0f, rank = 1),
+            Player(2, "B", "b", points = 0.0f, rank = 1),
+            Player(3, "C", "c", points = 2.0f, rank = 1),
+            Player(4, "D", "d", points = 3.0f, rank = 1),
         )
-        viewModel.points = mutableListOf(1.0f, 0.0f, 2.0f, 3.0f)
-        viewModel.ranks = mutableListOf(1, 1, 1, 1)
 
         viewModel.calculateRanks()
-
+        val result = viewModel.players.map { p -> p.rank }
         val expected = mutableListOf(3, 4, 2, 1)
 
-        assertEquals(expected, viewModel.ranks)
+        assertEquals(expected, result)
 
     }
     @Test
     fun calculateRanks_two_not_different() {
         viewModel.players = listOf(
-            Player(1, "A", "a"),
-            Player(2, "B", "b"),
-            Player(3, "C", "c"),
-            Player(4, "D", "d"),
+            Player(1, "A", "a", points = 1.0f, rank = 1),
+            Player(2, "B", "b", points = 0.0f, rank = 1),
+            Player(3, "C", "c", points = 1.0f, rank = 1),
+            Player(4, "D", "d", points = 2.0f, rank = 1),
         )
-        viewModel.points = mutableListOf(1.0f, 0.0f, 1.0f, 2.0f)
-        viewModel.ranks = mutableListOf(1, 1, 1, 1)
 
         viewModel.calculateRanks()
-
+        val result = viewModel.players.map { p -> p.rank }
         val expected = mutableListOf(2, 4, 2, 1)
 
-        assertEquals(expected, viewModel.ranks)
+        assertEquals(expected, result)
     }
 }

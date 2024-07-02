@@ -6,24 +6,25 @@ import org.apache.commons.lang3.StringUtils
 import java.io.File
 
 class TRFxFileHandler (
-    private val filesDir: File
+    filesDir: File,
+    private val tournamentInfo: Tournament
 ){
-    fun createInitialTRFxFile(
-        tournamentInfo: Tournament,
-        players: List<Player>,
-    ): String {
-        val dirname = "$filesDir/tournament_${tournamentInfo.name.replace(" ","")}"
-        val filename = "$dirname/initial.trfx.txt"
+    private val dirname = "$filesDir/tournament_${tournamentInfo.name.replace(" ","")}"
+    init {
         val dir = File(dirname)
         dir.mkdirs()
+    }
+    fun createInitialTRFxFile(
+        players: List<Player>,
+    ): String {
+        val filename = "$dirname/round0.trfx.txt"
         val file = File(filename)
-        val content = createInitialFileContent(tournamentInfo, players)
+        val content = createInitialFileContent(players)
         file.writeText(content)
         return filename
     }
 
     private fun createInitialFileContent(
-        tournamentInfo: Tournament,
         players: List<Player>,
     ): String {
         val buffer = StringBuffer()
@@ -49,5 +50,33 @@ class TRFxFileHandler (
             buffer.append("$dataIdForPlayerData $startingRank $sex $title $name $fideRating $fideFederation $fideNumber $birthdate $points       \n")
         }
         return buffer.toString()
+    }
+
+    fun addPointsToFile(
+        round: Int,
+        players: List<Player>,
+    ) {
+        val filename = "$dirname/round$round.trfx.txt"
+        val file = File(filename)
+
+        val idIndexStart = 4
+        val idIndexEnd = 8
+        val pointsIndexStart = 80
+        val pointsIndexEnd = 83
+
+        val content = StringBuffer()
+        for (line in file.readLines()) {
+            var newLine: String = line
+            if (line.startsWith("001")) {
+                val playerId = line.substring(idIndexStart, idIndexEnd).trim().toInt()
+                val player: Player? = players.find { p -> p.id == playerId }
+                if (player != null) {
+                    val points = "${player.points}"
+                    newLine = line.replaceRange(pointsIndexStart, pointsIndexEnd, points)
+                }
+            }
+            content.append(newLine).append("\n")
+        }
+        file.writeText(content.toString())
     }
 }

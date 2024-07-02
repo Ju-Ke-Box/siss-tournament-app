@@ -17,17 +17,13 @@ import java.io.File
 
 
 class PlayTournamentViewModel(
-    filesDir: File,
+    private val filesDir: File,
 ): ViewModel() {
     var tournamentInfo: Tournament = Tournament("", 0, "")
     var players: List<Player> = listOf()
-    var points: MutableList<Float> = mutableStateListOf()
-    var ranks: MutableList<Int> = mutableStateListOf()
     var currentRound by mutableIntStateOf(0)
     var currentPairings: SnapshotStateMap<Pair<Int, Int>, String> = mutableStateMapOf() //(white,black)->result
 
-    private val trFxFileHandler = TRFxFileHandler(filesDir)
-    private val javafoHandler = JaVaFoHandler()
     fun getPlayerById(id: Int): Player {
         return players.find { player -> player.id == id }?: Player.byePlayer
     }
@@ -35,9 +31,9 @@ class PlayTournamentViewModel(
     fun initialize(tournamentInfo: Tournament, players: List<Player>) {
         this.tournamentInfo = tournamentInfo
         this.players = players
-        players.forEach { _ -> this.points.add(0.0f)}
-        players.forEach { _ -> this.ranks.add(1)}
-        val filename = trFxFileHandler.createInitialTRFxFile(this.tournamentInfo, this.players)
+        val trFxFileHandler = TRFxFileHandler(this.filesDir, tournamentInfo)
+        val javafoHandler = JaVaFoHandler()
+        val filename = trFxFileHandler.createInitialTRFxFile(this.players)
         val pairings = javafoHandler.getPairings(filename)
         pairings.forEach { (k, v) -> currentPairings[k]=v }
     }
@@ -45,12 +41,16 @@ class PlayTournamentViewModel(
     fun startNextRound() {
         calculatePoints()
         calculateRanks()
+        //add to trfx file
+        //increment round
+        //calculate next pairings (new file)
+
     }
 
     fun calculatePoints() {
         for (pair in currentPairings.keys) {
-            val whiteIndex = pair.first -1
-            val blackIndex = pair.second -1
+            val whitePlayer = getPlayerById(pair.first)
+            val blackPlayer = getPlayerById(pair.second)
             var whitePoints = 0.0f
             var blackPoints = 0.0f
             when (currentPairings[pair]) {
@@ -65,30 +65,25 @@ class PlayTournamentViewModel(
                     blackPoints = 1.0f
                 }
             }
-            if (whiteIndex != -1) {
-                points[whiteIndex] += whitePoints
-            }
-            if (blackIndex != -1) {
-                points[blackIndex] += blackPoints
-            }
+            whitePlayer.points += whitePoints
+            blackPlayer.points += blackPoints
         }
     }
 
     fun calculateRanks() {
-        val sortedPlayers = players.sortedByDescending { player -> points[player.id-1] }
+        val sortedPlayers = players.sortedByDescending { player -> player.points }
         var rank = 1
         var inc = 0 // 0 because the first player will match its score and inc++
-        var lastPoints = points[sortedPlayers[0].id -1]
+        var lastPoints = sortedPlayers[0].points
         for (player in sortedPlayers) {
-            val index = player.id-1
-            if (points[index] == lastPoints) {
-                ranks[index] = rank
+            if (player.points == lastPoints) {
+                player.rank = rank
                 inc++
             } else {
                 rank += inc
-                ranks[index] = rank
+                player.rank = rank
                 inc = 1
-                lastPoints = points[index]
+                lastPoints = player.points
             }
         }
     }
