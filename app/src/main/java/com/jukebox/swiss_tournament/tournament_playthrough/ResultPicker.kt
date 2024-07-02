@@ -18,8 +18,8 @@ import androidx.compose.ui.Modifier
 fun ResultPicker(
     options: List<String>,
     onResultChange: (newResult: String) -> Unit,
-    inititalOption: String = "-",
     modifier: Modifier = Modifier,
+    inititalOption: String = "-",
 ) {
     var expanded by remember { mutableStateOf(false) }
     var selectedOption by remember { mutableStateOf(inititalOption) }

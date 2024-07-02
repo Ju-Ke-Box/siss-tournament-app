@@ -11,4 +11,5 @@ data object PossibleStoreResult {
     val blackWon = "0"
     val remis = "="
     val ongoing = ""
+    val bye = "F"
 }

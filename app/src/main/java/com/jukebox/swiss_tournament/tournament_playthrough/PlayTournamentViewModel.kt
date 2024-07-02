@@ -35,8 +35,7 @@ class PlayTournamentViewModel(
         this.players = players
         trfxFileHandler = TRFxFileHandler(this.filesDir, tournamentInfo)
         val filename = trfxFileHandler.createInitialTRFxFile(this.players)
-        val pairings = javafoHandler.getPairings(filename)
-        pairings.forEach { (k, v) -> currentPairings[k]=v }
+        getPairings(filename)
     }
 
     fun startNextRound() {
@@ -44,10 +43,20 @@ class PlayTournamentViewModel(
         calculatePoints()
         trfxFileHandler.addPointsToFile(currentRound, players)
         calculateRanks()
-        //add to trfx file
-        //increment round
-        //calculate next pairings (new file)
+        trfxFileHandler.addRanksToFile(currentRound, players)
+        trfxFileHandler.appendRoundResultsToFile(currentRound, currentPairings)
+        if (currentRound++ < tournamentInfo.numOfRounds-1) {
+            val filename = trfxFileHandler.createNextRoundFile(currentRound)
+            getPairings(filename)
+        }
+        //TODO else show results
 
+    }
+
+    private fun getPairings(filename: String) {
+        val pairings = javafoHandler.getPairings(filename)
+        currentPairings = mutableStateMapOf()
+        pairings.forEach { (k, v) -> currentPairings[k]=v }
     }
 
     fun calculatePoints() {
