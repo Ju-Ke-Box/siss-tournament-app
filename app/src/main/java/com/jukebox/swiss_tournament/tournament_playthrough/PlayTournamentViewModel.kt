@@ -2,7 +2,6 @@ package com.jukebox.swiss_tournament.tournament_playthrough
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshots.SnapshotStateMap
@@ -19,10 +18,13 @@ import java.io.File
 class PlayTournamentViewModel(
     private val filesDir: File,
 ): ViewModel() {
-    var tournamentInfo: Tournament = Tournament("", 0, "")
+    lateinit var tournamentInfo: Tournament
     var players: List<Player> = listOf()
     var currentRound by mutableIntStateOf(0)
     var currentPairings: SnapshotStateMap<Pair<Int, Int>, String> = mutableStateMapOf() //(white,black)->result
+
+    private lateinit var trfxFileHandler: TRFxFileHandler
+    private val javafoHandler = JaVaFoHandler()
 
     fun getPlayerById(id: Int): Player {
         return players.find { player -> player.id == id }?: Player.byePlayer
@@ -31,15 +33,16 @@ class PlayTournamentViewModel(
     fun initialize(tournamentInfo: Tournament, players: List<Player>) {
         this.tournamentInfo = tournamentInfo
         this.players = players
-        val trFxFileHandler = TRFxFileHandler(this.filesDir, tournamentInfo)
-        val javafoHandler = JaVaFoHandler()
-        val filename = trFxFileHandler.createInitialTRFxFile(this.players)
+        trfxFileHandler = TRFxFileHandler(this.filesDir, tournamentInfo)
+        val filename = trfxFileHandler.createInitialTRFxFile(this.players)
         val pairings = javafoHandler.getPairings(filename)
         pairings.forEach { (k, v) -> currentPairings[k]=v }
     }
 
     fun startNextRound() {
+        //TODO double check that no match is ongoing
         calculatePoints()
+        trfxFileHandler.addPointsToFile(currentRound, players)
         calculateRanks()
         //add to trfx file
         //increment round

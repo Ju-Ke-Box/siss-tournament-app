@@ -47,7 +47,8 @@ class TRFxFileHandler (
             val fideNumber = "NNNNNNNNNNN"
             val birthdate = "YYYY/MM/DD"
             val points = " 0.0"
-            buffer.append("$dataIdForPlayerData $startingRank $sex $title $name $fideRating $fideFederation $fideNumber $birthdate $points       \n")
+            val rank = "  1"
+            buffer.append("$dataIdForPlayerData $startingRank $sex $title $name $fideRating $fideFederation $fideNumber $birthdate $points $rank  \n")
         }
         return buffer.toString()
     }
@@ -71,7 +72,7 @@ class TRFxFileHandler (
                 val playerId = line.substring(idIndexStart, idIndexEnd).trim().toInt()
                 val player: Player? = players.find { p -> p.id == playerId }
                 if (player != null) {
-                    val points = "${player.points}"
+                    val points = "${player.points}".padStart(3)
                     newLine = line.replaceRange(pointsIndexStart, pointsIndexEnd, points)
                 }
             }
@@ -79,4 +80,33 @@ class TRFxFileHandler (
         }
         file.writeText(content.toString())
     }
+
+    fun addRanksToFile(
+        round: Int,
+        players: List<Player>
+    ) {
+        val filename = "$dirname/round$round.trfx.txt"
+        val file = File(filename)
+
+        val idIndexStart = 4
+        val idIndexEnd = 8
+        val rankIndexStart = 85
+        val rankIndexEnd = 88
+
+        val content = StringBuffer()
+        for (line in file.readLines()) {
+            var newLine: String = line
+            if (line.startsWith("001")) {
+                val playerId = line.substring(idIndexStart, idIndexEnd).trim().toInt()
+                val player: Player? = players.find { p -> p.id == playerId }
+                if (player != null) {
+                    val rank = "${player.rank}".padStart(3)
+                    newLine = line.replaceRange(rankIndexStart, rankIndexEnd, rank)
+                }
+            }
+            content.append(newLine).append("\n")
+        }
+        file.writeText(content.toString())
+    }
+
 }

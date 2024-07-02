@@ -26,8 +26,8 @@ class TRFxFileHandlerTest {
             012 minimal
             062 2
             XXR 1
-            001    1                        Eins, Spieler1 RRRR     NNNNNNNNNNN YYYY/MM/DD  0.0       
-            001    2                        Zwei, Spieler2 RRRR     NNNNNNNNNNN YYYY/MM/DD  0.0       
+            001    1                        Eins, Spieler1 RRRR     NNNNNNNNNNN YYYY/MM/DD  0.0   1  
+            001    2                        Zwei, Spieler2 RRRR     NNNNNNNNNNN YYYY/MM/DD  0.0   1  
 
         """.trimIndent()
         assertEquals(expected, resultContent)
@@ -38,7 +38,7 @@ class TRFxFileHandlerTest {
     fun addPointsToFile_positive() {
         //Assemble
         val tournament = Tournament(
-            name = "minimal",
+            name = "addTest",
             numOfRounds = 1
         )
         val players = listOf(
@@ -46,10 +46,10 @@ class TRFxFileHandlerTest {
             Player(2, "Spieler2", "Zwei", points = 0.0f),
         )
 
-        File("sampledata/tournament_minimal").mkdirs()
-        val file = File("sampledata/tournament_minimal/round100.trfx.txt")
+        File("sampledata/tournament_addTest").mkdirs()
+        val file = File("sampledata/tournament_addTest/round100.trfx.txt")
         file.writeText("""
-            012 minimal
+            012 addTest
             062 2
             XXR 1
             001    1                        Eins, Spieler1 RRRR     NNNNNNNNNNN YYYY/MM/DD  0.0       
@@ -63,11 +63,50 @@ class TRFxFileHandlerTest {
 
         //Assert
         val expected = """
-            012 minimal
+            012 addTest
             062 2
             XXR 1
             001    1                        Eins, Spieler1 RRRR     NNNNNNNNNNN YYYY/MM/DD  1.0       
             001    2                        Zwei, Spieler2 RRRR     NNNNNNNNNNN YYYY/MM/DD  0.0       
+
+        """.trimIndent()
+        val result = file.readText()
+        assertEquals(expected, result)
+    }
+    @Test
+    fun addRanksToFile_positive() {
+        //Assemble
+        val tournament = Tournament(
+            name = "addTest",
+            numOfRounds = 1
+        )
+        val players = listOf(
+            Player(1, "Spieler1", "Eins", rank = 1),
+            Player(2, "Spieler2", "Zwei", rank = 2),
+        )
+
+        File("sampledata/tournament_addTest").mkdirs()
+        val file = File("sampledata/tournament_addTest/round101.trfx.txt")
+        file.writeText("""
+            012 addTest
+            062 2
+            XXR 1
+            001    1                        Eins, Spieler1 RRRR     NNNNNNNNNNN YYYY/MM/DD  1.0       
+            001    2                        Zwei, Spieler2 RRRR     NNNNNNNNNNN YYYY/MM/DD  0.0       
+
+        """.trimIndent())
+
+        //Act
+        val handler = TRFxFileHandler(File("sampledata"), tournament)
+        handler.addRanksToFile(101, players)
+
+        //Assert
+        val expected = """
+            012 addTest
+            062 2
+            XXR 1
+            001    1                        Eins, Spieler1 RRRR     NNNNNNNNNNN YYYY/MM/DD  1.0    1  
+            001    2                        Zwei, Spieler2 RRRR     NNNNNNNNNNN YYYY/MM/DD  0.0    2  
 
         """.trimIndent()
         val result = file.readText()
