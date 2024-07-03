@@ -27,7 +27,7 @@ class TRFxFileHandler (
     fun createNextRoundFile(round: Int): String {
         val newFilename = "$dirname/round$round.trfx.txt"
         val oldFilename = "$dirname/round${round-1}.trfx.txt"
-        File(oldFilename).copyTo(File(newFilename))
+        File(oldFilename).copyTo(File(newFilename), overwrite = true)
         return newFilename
     }
 

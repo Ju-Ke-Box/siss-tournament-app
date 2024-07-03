@@ -1,7 +1,6 @@
 package com.jukebox.swiss_tournament
 
 import android.os.Bundle
-import android.os.Environment.getExternalStorageDirectory
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
@@ -27,7 +26,6 @@ import com.jukebox.swiss_tournament.tournament_creation.CreateTournamentViewMode
 import com.jukebox.swiss_tournament.tournament_playthrough.PlayTournamentScreen
 import com.jukebox.swiss_tournament.tournament_playthrough.PlayTournamentViewModel
 import com.jukebox.swiss_tournament.ui.theme.SwissTournamentTheme
-import java.io.File
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -45,7 +43,8 @@ class MainActivity : ComponentActivity() {
                     )
                     val playTournamentViewModel: PlayTournamentViewModel by viewModels(
                         factoryProducer = { PlayTournamentViewModel.Factory(
-                            filesDir = File("${getExternalStorageDirectory().path}/Documents")
+//                            filesDir = File("${getExternalStorageDirectory().path}/Documents")
+                            filesDir = filesDir
                         )}
                     )
 
