@@ -25,6 +25,8 @@ import com.jukebox.swiss_tournament.tournament_creation.CreateTournamentScreen
 import com.jukebox.swiss_tournament.tournament_creation.CreateTournamentViewModel
 import com.jukebox.swiss_tournament.tournament_playthrough.PlayTournamentScreen
 import com.jukebox.swiss_tournament.tournament_playthrough.PlayTournamentViewModel
+import com.jukebox.swiss_tournament.tournament_results.TournamentResultsScreen
+import com.jukebox.swiss_tournament.tournament_results.TournamentResultsViewModel
 import com.jukebox.swiss_tournament.ui.theme.SwissTournamentTheme
 
 class MainActivity : ComponentActivity() {
@@ -46,6 +48,11 @@ class MainActivity : ComponentActivity() {
 //                            filesDir = File("${getExternalStorageDirectory().path}/Documents")
                             filesDir = filesDir
                         )}
+                    )
+                    val tournamentResultsViewModel: TournamentResultsViewModel by viewModels(
+                        factoryProducer = {
+                            TournamentResultsViewModel.Factory()
+                        }
                     )
 
                     Scaffold {
@@ -82,9 +89,20 @@ class MainActivity : ComponentActivity() {
                                 content = {
                                     PlayTournamentScreen(
                                         viewModel = playTournamentViewModel,
-                                        navController = navController,
+                                        showResults = {players ->
+                                            tournamentResultsViewModel.players = players
+                                            navController.navigate(Screens.TournamentResultsScreen)
+                                        }
                                     )
                                 },
+                            )
+                            composable(
+                                route = Screens.TournamentResultsScreen,
+                                content = {
+                                    TournamentResultsScreen(
+                                        viewModel = tournamentResultsViewModel
+                                    )
+                                }
                             )
                         }
                     }
@@ -124,5 +142,6 @@ class MainActivity : ComponentActivity() {
         const val StartScreen = "startScreen"
         const val CreateTournamentScreen = "createTournamentScreen"
         const val PlayTournamentScreen = "playTournamentScreen"
+        const val TournamentResultsScreen = "tournamentResultsScreen"
     }
 }

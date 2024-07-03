@@ -47,11 +47,11 @@ class PlayTournamentViewModel(
         calculateRanks()
         trfxFileHandler.addRanksToFile(currentRound, players)
         trfxFileHandler.appendRoundResultsToFile(currentRound, currentPairings)
-        if (currentRound++ < tournamentInfo.numOfRounds-1) {
+        if (currentRound +1 < tournamentInfo.numOfRounds) {
+            currentRound += 1
             val filename = trfxFileHandler.createNextRoundFile(currentRound)
             getPairings(filename)
         }
-        //TODO else show results
 
     }
 
@@ -76,6 +76,12 @@ class PlayTournamentViewModel(
                     whitePoints = 1.0f
                 }
                 StoreResult.blackWon -> {
+                    blackPoints = 1.0f
+                }
+                StoreResult.byeForWhite -> {
+                    whitePoints = 1.0f
+                }
+                StoreResult.byeForBlack -> {
                     blackPoints = 1.0f
                 }
             }
@@ -104,13 +110,11 @@ class PlayTournamentViewModel(
 
 
     companion object {
-        fun Factory(filesDir: File) : ViewModelProvider.Factory {
-            return object : ViewModelProvider.Factory {
-                override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return PlayTournamentViewModel(
-                        filesDir
-                    ) as T
-                }
+        fun Factory(filesDir: File) = object : ViewModelProvider.Factory {
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return PlayTournamentViewModel(
+                    filesDir
+                ) as T
             }
         }
     }

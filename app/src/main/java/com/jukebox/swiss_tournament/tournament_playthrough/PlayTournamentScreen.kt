@@ -19,13 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
+import com.jukebox.swiss_tournament.data.model.Player
 import com.jukebox.swiss_tournament.data.model.StoreResult
 
 @Composable
 fun PlayTournamentScreen(
     viewModel: PlayTournamentViewModel,
-    navController: NavController,
+    showResults : (players: List<Player>) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Column (
@@ -86,8 +86,19 @@ fun PlayTournamentScreen(
             }
         }
         if (viewModel.currentPairings.values.none { it == StoreResult.ongoing }) {
-            Button(onClick = { viewModel.startNextRound() }) {
-                Text(text = "Nächste Runde")
+            if (viewModel.currentRound +1 >= viewModel.tournamentInfo.numOfRounds) {
+                Button(onClick = {
+                    viewModel.startNextRound()
+                    showResults(viewModel.players)
+                }) {
+                    Text(text = "Ergebnisse")
+                }
+            } else {
+                Button(onClick = {
+                    viewModel.startNextRound()
+                }) {
+                    Text(text = "Nächste Runde")
+                }
             }
         }
     }
