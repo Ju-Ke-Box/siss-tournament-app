@@ -103,7 +103,7 @@ fun PlayerList(viewModel: CreateTournamentViewModel) {
             text = name,
             style = MaterialTheme.typography.headlineSmall,
             modifier = modifier
-                .border(1.dp, MaterialTheme.colorScheme.tertiary)
+                .border(1.dp, MaterialTheme.colorScheme.secondary)
                 .padding(start = 4.dp)
         )
     }
