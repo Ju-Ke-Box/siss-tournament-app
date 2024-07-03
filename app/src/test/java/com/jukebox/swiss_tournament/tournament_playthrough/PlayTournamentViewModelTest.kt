@@ -1,7 +1,7 @@
 package com.jukebox.swiss_tournament.tournament_playthrough
 
 import com.jukebox.swiss_tournament.data.model.Player
-import com.jukebox.swiss_tournament.data.model.PossibleStoreResult
+import com.jukebox.swiss_tournament.data.model.StoreResult
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
@@ -61,9 +61,9 @@ class PlayTournamentViewModelTest {
             Player(5, "E", "e"),
             Player(6, "F", "f"),
         )
-        viewModel.currentPairings.put(Pair(1, 2), PossibleStoreResult.whiteWon)
-        viewModel.currentPairings.put(Pair(3, 4), PossibleStoreResult.blackWon)
-        viewModel.currentPairings.put(Pair(5, 6), PossibleStoreResult.remis)
+        viewModel.currentPairings.put(Pair(1, 2), StoreResult.whiteWon)
+        viewModel.currentPairings.put(Pair(3, 4), StoreResult.blackWon)
+        viewModel.currentPairings.put(Pair(5, 6), StoreResult.remis)
 
         viewModel.calculatePoints()
 

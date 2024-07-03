@@ -14,13 +14,13 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.jukebox.swiss_tournament.data.model.PossibleDisplayResults
-import com.jukebox.swiss_tournament.data.model.PossibleStoreResult
+import com.jukebox.swiss_tournament.data.model.StoreResult
 
 @Composable
 fun PlayTournamentScreen(
@@ -47,12 +47,10 @@ fun PlayTournamentScreen(
             items(viewModel.currentPairings.keys.toList()) { pair ->
                 val whitePlayer = viewModel.getPlayerById(pair.first)
                 val blackPlayer = viewModel.getPlayerById(pair.second)
-                val initialResultPickerOption =
-                    when (viewModel.currentPairings[pair]) {
-                        PossibleStoreResult.blackWon -> PossibleDisplayResults.blackWon
-                        PossibleStoreResult.whiteWon -> PossibleDisplayResults.whiteWon
-                        else -> PossibleDisplayResults.ongoing
-                    }
+
+                //Hack to reset selectedOption at start of new round
+                //noinspection UnrememberedMutableState
+                val selectedOption = mutableStateOf(viewModel.currentPairings[pair]!!)
 
                 Row (
                     horizontalArrangement = Arrangement.Center,
@@ -77,21 +75,9 @@ fun PlayTournamentScreen(
                             .padding(4.dp)
                     )
                     ResultPicker(
-                        options = listOf(PossibleDisplayResults.whiteWon, PossibleDisplayResults.blackWon, PossibleDisplayResults.remis),
-                        onResultChange = {newResult ->
-                            when(newResult) {
-                                PossibleDisplayResults.whiteWon -> {
-                                    viewModel.currentPairings[pair] = PossibleStoreResult.whiteWon
-                                }
-                                PossibleDisplayResults.blackWon -> {
-                                    viewModel.currentPairings[pair] = PossibleStoreResult.blackWon
-                                }
-                                PossibleDisplayResults.remis -> {
-                                    viewModel.currentPairings[pair] = PossibleStoreResult.remis
-                                }
-                            }
-                        },
-                        inititalOption = initialResultPickerOption,
+                        options = listOf(StoreResult.whiteWon, StoreResult.blackWon, StoreResult.remis),
+                        onResultChange = { viewModel.currentPairings[pair] = it },
+                        selectedOption = selectedOption,
                         modifier = Modifier
                             .width(120.dp)
                             .padding(start = 4.dp, end = 4.dp)
@@ -99,7 +85,7 @@ fun PlayTournamentScreen(
                 }
             }
         }
-        if (viewModel.currentPairings.values.none { it == PossibleStoreResult.ongoing }) {
+        if (viewModel.currentPairings.values.none { it == StoreResult.ongoing }) {
             Button(onClick = { viewModel.startNextRound() }) {
                 Text(text = "Nächste Runde")
             }

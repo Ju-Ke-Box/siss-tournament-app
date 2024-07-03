@@ -1,7 +1,7 @@
 package com.jukebox.swiss_tournament.data.pairing_engine
 
 import com.jukebox.swiss_tournament.data.model.Player
-import com.jukebox.swiss_tournament.data.model.PossibleStoreResult
+import com.jukebox.swiss_tournament.data.model.StoreResult
 import com.jukebox.swiss_tournament.data.model.Tournament
 import org.apache.commons.lang3.StringUtils
 import java.io.File
@@ -154,18 +154,18 @@ class TRFxFileHandler (
 
             //white
             val whiteOpponentId = if (black ==0) {"0000"} else {"$black".padStart(4)}
-            val whiteResult = if (black==0) PossibleStoreResult.bye else result
+            val whiteResult = if (black==0) StoreResult.byeForWhite else result
             val whiteColor = if (black==0) '-' else 'w'
             resultMap[white] = Triple(whiteOpponentId, whiteColor, whiteResult)
             //black
             val blackOpponentId = if (white ==0) {"0000"} else {"$white".padStart(4)}
             val blackResult =
                 if (white==0) {
-                    PossibleStoreResult.bye
+                    StoreResult.byeForBlack
                 } else {
                     when (result) {
-                        PossibleStoreResult.whiteWon -> { PossibleStoreResult.blackWon }
-                        PossibleStoreResult.blackWon -> { PossibleStoreResult.whiteWon }
+                        StoreResult.whiteWon -> { StoreResult.blackWon }
+                        StoreResult.blackWon -> { StoreResult.whiteWon }
                         else -> {result}
                     }
                 }

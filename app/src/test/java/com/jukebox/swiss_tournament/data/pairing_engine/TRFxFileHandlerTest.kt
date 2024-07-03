@@ -1,7 +1,7 @@
 package com.jukebox.swiss_tournament.data.pairing_engine
 
 import com.jukebox.swiss_tournament.data.model.Player
-import com.jukebox.swiss_tournament.data.model.PossibleStoreResult
+import com.jukebox.swiss_tournament.data.model.StoreResult
 import com.jukebox.swiss_tournament.data.model.Tournament
 import org.junit.Assert.*
 import org.junit.Test
@@ -128,8 +128,8 @@ class TRFxFileHandlerTest {
         )
 
         val pairings = HashMap<Pair<Int, Int>, String>()
-        pairings.put(Pair(3,1), PossibleStoreResult.blackWon)
-        pairings.put(Pair(2,4), PossibleStoreResult.whiteWon)
+        pairings.put(Pair(3,1), StoreResult.blackWon)
+        pairings.put(Pair(2,4), StoreResult.whiteWon)
 
         File("sampledata/tournament_addTest").mkdirs()
         val file = File("sampledata/tournament_addTest/round102.trfx.txt")

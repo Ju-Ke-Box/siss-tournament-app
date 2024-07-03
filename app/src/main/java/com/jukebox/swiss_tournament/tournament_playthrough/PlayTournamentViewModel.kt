@@ -8,7 +8,7 @@ import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.jukebox.swiss_tournament.data.model.Player
-import com.jukebox.swiss_tournament.data.model.PossibleStoreResult
+import com.jukebox.swiss_tournament.data.model.StoreResult
 import com.jukebox.swiss_tournament.data.model.Tournament
 import com.jukebox.swiss_tournament.data.pairing_engine.JaVaFoHandler
 import com.jukebox.swiss_tournament.data.pairing_engine.TRFxFileHandler
@@ -39,7 +39,9 @@ class PlayTournamentViewModel(
     }
 
     fun startNextRound() {
-        //TODO double check that no match is ongoing
+        if (currentPairings.values.any { it == StoreResult.ongoing }) {
+            return
+        }
         calculatePoints()
         trfxFileHandler.addPointsToFile(currentRound, players)
         calculateRanks()
@@ -66,14 +68,14 @@ class PlayTournamentViewModel(
             var whitePoints = 0.0f
             var blackPoints = 0.0f
             when (currentPairings[pair]) {
-                PossibleStoreResult.remis -> {
+                StoreResult.remis -> {
                     whitePoints = 0.5f
                     blackPoints = 0.5f
                 }
-                PossibleStoreResult.whiteWon -> {
+                StoreResult.whiteWon -> {
                     whitePoints = 1.0f
                 }
-                PossibleStoreResult.blackWon -> {
+                StoreResult.blackWon -> {
                     blackPoints = 1.0f
                 }
             }
